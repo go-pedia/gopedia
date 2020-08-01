@@ -100,6 +100,8 @@ github.com/go-pg/pg v8.0.7+incompatible/go.mod h1:a2oXow+aFOrvwcKs3eIA0lNFmMilrx
 github.com/go-pg/pg/v10 v10.0.0-beta.5/go.mod h1:H9p3C643gy3Qq2MOs3NHi+iDrjF71Rzq1hXhLGBpYGk=
 github.com/go-pg/pg/v10 v10.0.0-beta.7 h1:NekwoSPm0DtGhROuAnIQcQZA6XEtBtrPsDJDnDqm2AQ=
 github.com/go-pg/pg/v10 v10.0.0-beta.7/go.mod h1:iANPqkn27fEfWRNu0Tr6d6Anogdn03uJ+XzJellwKn4=
+github.com/go-pg/pg/v10 v10.0.0-beta.8 h1:crKop9PNSWEvuWVrORsujgUwreS8yFw3AU+H6wrOWAQ=
+github.com/go-pg/pg/v10 v10.0.0-beta.8/go.mod h1:iANPqkn27fEfWRNu0Tr6d6Anogdn03uJ+XzJellwKn4=
 github.com/go-pg/pg/v9 v9.0.0-beta.14/go.mod h1:T2Sr6bpTCOr2lUqOUMiXLMJqZHSUBKk1LdgSqjwhZfA=
 github.com/go-pg/pg/v9 v9.0.3/go.mod h1:Tm/Q3Vt6gdQOH6TTN1H/xLlIXc+Qrka7TZ6uREtu/eA=
 github.com/go-pg/pg/v9 v9.1.6 h1:IqBayenvp9EWjHncRE7//SRmQuktq60oeO1/MkEx3dY=

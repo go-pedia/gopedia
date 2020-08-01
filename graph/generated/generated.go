@@ -60,7 +60,7 @@ type ComplexityRoot struct {
 	Bucket struct {
 		ID      func(childComplexity int) int
 		Product func(childComplexity int) int
-		User    func(childComplexity int) int
+		Users   func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -100,7 +100,7 @@ type ComplexityRoot struct {
 }
 
 type BucketResolver interface {
-	User(ctx context.Context, obj *model.Bucket) (*model.User, error)
+	Users(ctx context.Context, obj *model.Bucket) (*model.User, error)
 	Product(ctx context.Context, obj *model.Bucket) (*model.Product, error)
 }
 type MutationResolver interface {
@@ -183,12 +183,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Bucket.Product(childComplexity), true
 
-	case "Bucket.user":
-		if e.complexity.Bucket.User == nil {
+	case "Bucket.users":
+		if e.complexity.Bucket.Users == nil {
 			break
 		}
 
-		return e.complexity.Bucket.User(childComplexity), true
+		return e.complexity.Bucket.Users(childComplexity), true
 
 	case "Mutation.createBucket":
 		if e.complexity.Mutation.CreateBucket == nil {
@@ -498,7 +498,7 @@ type Product{
 
 type Bucket{
   id: ID!
-  user: User!
+  users: User!
   product: Product!
 }
 
@@ -964,7 +964,7 @@ func (ec *executionContext) _Bucket_id(ctx context.Context, field graphql.Collec
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Bucket_user(ctx context.Context, field graphql.CollectedField, obj *model.Bucket) (ret graphql.Marshaler) {
+func (ec *executionContext) _Bucket_users(ctx context.Context, field graphql.CollectedField, obj *model.Bucket) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -981,7 +981,7 @@ func (ec *executionContext) _Bucket_user(ctx context.Context, field graphql.Coll
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Bucket().User(rctx, obj)
+		return ec.resolvers.Bucket().Users(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3275,7 +3275,7 @@ func (ec *executionContext) _Bucket(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "user":
+		case "users":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -3283,7 +3283,7 @@ func (ec *executionContext) _Bucket(ctx context.Context, sel ast.SelectionSet, o
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Bucket_user(ctx, field, obj)
+				res = ec._Bucket_users(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

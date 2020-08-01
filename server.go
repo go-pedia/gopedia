@@ -7,9 +7,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-pg/pg/v9"
+	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/sony-nurdianto/go-pedia/graph"
 	"github.com/sony-nurdianto/go-pedia/graph/domain"
@@ -23,6 +23,7 @@ const defaultPort = "8080"
 func main() {
 
 	DB := postgres.New(&pg.Options{
+		Addr:     ":5432",
 		User:     "postgres",
 		Password: "postgres",
 		Database: "gopedia",
@@ -38,8 +39,9 @@ func main() {
 	}
 
 	userRepo := postgres.UserRepo{DB: DB}
+	bucketRepo := postgres.BucketRepo{DB: DB}
 
-	r := chi.NewRouter()
+	r := mux.NewRouter()
 
 	r.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8080"},
@@ -51,7 +53,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware1.AuthMiddleware(userRepo))
 
-	d := domain.NewDomain(userRepo, postgres.BucketRepo{DB: DB}, postgres.ProductRepo{DB: DB})
+	d := domain.NewDomain(userRepo, bucketRepo, postgres.ProductRepo{DB: DB})
 
 	c := generated.Config{Resolvers: &graph.Resolver{Domain: d}}
 

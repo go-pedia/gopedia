@@ -7,7 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-pg/pg v8.0.7+incompatible
-	github.com/go-pg/pg/v10 v10.0.0-beta.7 // indirect
+	github.com/go-pg/pg/v10 v10.0.0-beta.8 // indirect
 	github.com/go-pg/pg/v9 v9.1.6
 	github.com/golang-migrate/migrate/v4 v4.11.0 // indirect
 	github.com/gorilla/mux v1.7.4
