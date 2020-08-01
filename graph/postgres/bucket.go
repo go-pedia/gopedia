@@ -11,14 +11,11 @@ type BucketRepo struct {
 }
 
 //GetBucket to get all bucket
-func (b *BucketRepo) GetBucket() ([]*model.Bucket, error) {
-	var buckets []*model.Bucket
-
-	err := b.DB.Model(&buckets).Select()
+func (p *BucketRepo) GetBucket() ([]*model.Bucket, error) {
+	var bucket []*model.Bucket
+	err := p.DB.Model(&bucket).Select()
 	if err != nil {
 		return nil, err
 	}
-
-	return buckets, err
-
+	return bucket, nil
 }

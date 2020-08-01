@@ -13,14 +13,15 @@ import (
 	"github.com/sony-nurdianto/go-pedia/graph/model"
 )
 
-func (r *bucketResolver) User(ctx context.Context, obj *model.Product) (*model.User, error) {
+func (r *bucketResolver) User(ctx context.Context, obj *model.Bucket) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *bucketResolver) Product(ctx context.Context, obj *model.Product) (*model.Product, error) {
+func (r *bucketResolver) Product(ctx context.Context, obj *model.Bucket) (*model.Product, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
+//RegisterUser is to handle user Register
 func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -29,6 +30,8 @@ func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (
 
 	return r.Domain.RegisterUser(ctx, input)
 }
+
+//LoginUser is to Handle LoginUSer
 func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -38,7 +41,7 @@ func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model
 	return r.Domain.LoginUser(ctx, input)
 }
 
-func (r *mutationResolver) CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Product, error) {
+func (r *mutationResolver) CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Bucket, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -70,8 +73,8 @@ func (r *queryResolver) Users(ctx context.Context, filter *model.FilterUser, lim
 	return r.Domain.UserRepo.GetUsers(filter, limit, offset)
 }
 
-func (r *queryResolver) Buckets(ctx context.Context) (*model.Product, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Buckets(ctx context.Context) ([]*model.Bucket, error) {
+	return r.Domain.BucketRepo.GetBucket()
 }
 
 func (r *userResolver) ProductID(ctx context.Context, obj *model.User) ([]*model.Product, error) {
