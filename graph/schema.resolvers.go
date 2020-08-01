@@ -13,7 +13,7 @@ import (
 	"github.com/sony-nurdianto/go-pedia/graph/model"
 )
 
-//RegisterUser func
+//RegisterUser This is for Handle Registering User
 func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -23,7 +23,7 @@ func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (
 	return r.Domain.RegisterUser(ctx, input)
 }
 
-//LoginUser user
+//LoginUser This is for Handle Login USer
 func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -33,23 +33,24 @@ func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model
 	return r.Domain.LoginUser(ctx, input)
 }
 
-//CreateProduct
+func (r *mutationResolver) CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Bucket, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) CreateProduct(ctx context.Context, input model.NewProduct) (*model.Product, error) {
 	return r.Domain.CreateProduct(ctx, input)
 }
 
-//UpdateProduct
 func (r *mutationResolver) UpdateProduct(ctx context.Context, id string, input model.UpdateProduct) (*model.Product, error) {
 	return r.Domain.UpdateProduct(ctx, id, input)
 }
 
-//DeleteProduct
 func (r *mutationResolver) DeleteProduct(ctx context.Context, id string) (bool, error) {
 	return r.Domain.DeleteProduct(ctx, id)
 }
 
 func (r *productResolver) User(ctx context.Context, obj *model.Product) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	return getUserLoader(ctx).Load(obj.User)
 }
 
 func (r *queryResolver) Products(ctx context.Context, filter *model.FilterProduct, limit *int, offset *int) ([]*model.Product, error) {
@@ -58,6 +59,14 @@ func (r *queryResolver) Products(ctx context.Context, filter *model.FilterProduc
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	return r.Domain.UserRepo.GetUserByID(id)
+}
+
+func (r *queryResolver) Users(ctx context.Context, filter *model.FilterUser, limit *int, offset *int) ([]*model.User, error) {
+	return r.Domain.UserRepo.GetUsers(filter, limit, offset)
+}
+
+func (r *queryResolver) Buckets(ctx context.Context) ([]*model.Bucket, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *userResolver) ProductID(ctx context.Context, obj *model.User) ([]*model.Product, error) {
@@ -91,6 +100,13 @@ type userResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *productResolver) Users(ctx context.Context, obj *model.Product) (*model.User, error) {
-	return getUserLoader(ctx).Load(obj.User)
+func (r *bucketResolver) User(ctx context.Context, obj *model.User) (*model.User, error) {
+	return r.Domain.BucketRepo.GetBucketUser(obj)
 }
+func (r *bucketResolver) Product(ctx context.Context, obj *model.Product) (*model.Product, error) {
+	return r.Domain.BucketRepo.GetBucketProduct(obj)
+}
+
+func (r *Resolver) Bucket() generated.BucketResolver { return &bucketResolver{r} }
+
+type bucketResolver struct{ *Resolver }

@@ -40,3 +40,32 @@ func (u *UserRepo) CreateUser(tx *pg.Tx, user *model.User) (*model.User, error) 
 	_, err := tx.Model(user).Returning("*").Insert()
 	return user, err
 }
+
+//GetUsers like the name
+func (u *UserRepo) GetUsers(filter *model.FilterUser, limit, offset *int) ([]*model.User, error) {
+
+	var users []*model.User
+
+	query := u.DB.Model(&users)
+
+	if filter != nil {
+		if filter.Name != nil && *filter.Name != "" {
+			query.Where("name ILIKE ? ", fmt.Sprintf("%%%s%%", *filter.Name))
+		}
+	}
+
+	if limit != nil {
+		query.Limit(*limit)
+	}
+
+	if offset != nil {
+		query.Offset(*offset)
+	}
+
+	err := query.Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

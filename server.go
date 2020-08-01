@@ -51,7 +51,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware1.AuthMiddleware(userRepo))
 
-	d := domain.NewDomain(userRepo, postgres.ProductRepo{DB: DB})
+	d := domain.NewDomain(userRepo, postgres.BucketRepo{DB: DB}, postgres.ProductRepo{DB: DB})
 
 	c := generated.Config{Resolvers: &graph.Resolver{Domain: d}}
 

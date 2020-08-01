@@ -16,13 +16,27 @@ type AuthToken struct {
 	ExpiredAt   time.Time `json:"expiredAt"`
 }
 
+type Bucket struct {
+	ID      string   `json:"id"`
+	User    *User    `json:"user"`
+	Product *Product `json:"product"`
+}
+
 type FilterProduct struct {
+	Name *string `json:"name"`
+}
+
+type FilterUser struct {
 	Name *string `json:"name"`
 }
 
 type LoginUser struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type NewBucket struct {
+	Product string `json:"product"`
 }
 
 type NewProduct struct {

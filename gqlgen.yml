@@ -28,7 +28,7 @@ resolver:
 # struct_tag: json
 
 # Optional: turn on to use []Thing instead of []*Thing
-# omit_slice_element_pointers: false
+omit_slice_element_pointers: false
 
 # Optional: set to speed up generation time by not performing a final validation pass.
 # skip_validation: true
@@ -44,18 +44,6 @@ autobind:
 # modelgen, the others will be allowed when binding to fields. Configure them to
 # your liking
 models:
-  ID:
-    model:
-      - github.com/99designs/gqlgen/graphql.ID
-      - github.com/99designs/gqlgen/graphql.Int
-      - github.com/99designs/gqlgen/graphql.Int64
-      - github.com/99designs/gqlgen/graphql.Int32
-      - github.com/99designs/gqlgen/graphql.IntID
-  Int:
-    model:
-      - github.com/99designs/gqlgen/graphql.Int
-      - github.com/99designs/gqlgen/graphql.Int64
-      - github.com/99designs/gqlgen/graphql.Int32
   User:
     model: github.com/sony-nurdianto/go-pedia/graph/model.User
     fields:
@@ -66,4 +54,25 @@ models:
     fields:
       user:
         resolver: true
+  # Bucket:
+  #   model: github.com/sony-nurdianto/go-pedia/graph/model.Product
+  #   fields:
+  #     user:
+  #     product:
+  #       resolver : true
+  
 
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+      - github.com/99designs/gqlgen/graphql.Int32
+      - github.com/99designs/gqlgen/graphql.IntID
+  

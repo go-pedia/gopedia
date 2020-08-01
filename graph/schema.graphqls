@@ -34,14 +34,31 @@ type Product{
   user: User!
 }
 
+type Bucket{
+  id: ID!
+  user: User!
+  product: Product!
+}
+
+input NewBucket{
+  product: String!
+}
+
 input FilterProduct{
   name: String
 }
+
+input FilterUser{
+  name: String
+}
+
+
 
 input NewProduct{
   name: String!
   description: String!
   price: Int!
+  # User: String!
 
 }
 
@@ -68,7 +85,8 @@ input LoginUser{
 type Query{
   products(filter: FilterProduct, limit: Int = 10 , offset: Int = 0):[Product!]!
   user(id:ID!):User!
-
+  users(filter: FilterUser, limit: Int = 10 , offset: Int = 0):[User!]!
+  buckets: [Bucket!]!
 }
 
 
@@ -76,6 +94,7 @@ type Query{
 type Mutation{
   registerUser(input:RegisterUser!): AuthResponse!
   loginUser(input:LoginUser!):AuthResponse!
+  createBucket(input:NewBucket) : Bucket!
   createProduct(input: NewProduct!) : Product!
   updateProduct(id:ID!,input: UpdateProduct!) : Product!
   deleteProduct(id:ID!) : Boolean!
