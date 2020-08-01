@@ -13,7 +13,14 @@ import (
 	"github.com/sony-nurdianto/go-pedia/graph/model"
 )
 
-//RegisterUser This is for Handle Registering User
+func (r *bucketResolver) User(ctx context.Context, obj *model.Product) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *bucketResolver) Product(ctx context.Context, obj *model.Product) (*model.Product, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -22,8 +29,6 @@ func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (
 
 	return r.Domain.RegisterUser(ctx, input)
 }
-
-//LoginUser This is for Handle Login USer
 func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -33,7 +38,7 @@ func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model
 	return r.Domain.LoginUser(ctx, input)
 }
 
-func (r *mutationResolver) CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Bucket, error) {
+func (r *mutationResolver) CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Product, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -65,7 +70,7 @@ func (r *queryResolver) Users(ctx context.Context, filter *model.FilterUser, lim
 	return r.Domain.UserRepo.GetUsers(filter, limit, offset)
 }
 
-func (r *queryResolver) Buckets(ctx context.Context) ([]*model.Bucket, error) {
+func (r *queryResolver) Buckets(ctx context.Context) (*model.Product, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -76,6 +81,9 @@ func (r *userResolver) ProductID(ctx context.Context, obj *model.User) ([]*model
 func (r *userResolver) UpdataeAt(ctx context.Context, obj *model.User) (*time.Time, error) {
 	panic(fmt.Errorf("not implemented"))
 }
+
+// Bucket returns generated.BucketResolver implementation.
+func (r *Resolver) Bucket() generated.BucketResolver { return &bucketResolver{r} }
 
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
@@ -89,6 +97,7 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 // User returns generated.UserResolver implementation.
 func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
 
+type bucketResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type productResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
@@ -100,13 +109,3 @@ type userResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *bucketResolver) User(ctx context.Context, obj *model.User) (*model.User, error) {
-	return r.Domain.BucketRepo.GetBucketUser(obj)
-}
-func (r *bucketResolver) Product(ctx context.Context, obj *model.Product) (*model.Product, error) {
-	return r.Domain.BucketRepo.GetBucketProduct(obj)
-}
-
-func (r *Resolver) Bucket() generated.BucketResolver { return &bucketResolver{r} }
-
-type bucketResolver struct{ *Resolver }

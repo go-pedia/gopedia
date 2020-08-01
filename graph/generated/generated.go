@@ -36,6 +36,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Bucket() BucketResolver
 	Mutation() MutationResolver
 	Product() ProductResolver
 	Query() QueryResolver
@@ -98,10 +99,14 @@ type ComplexityRoot struct {
 	}
 }
 
+type BucketResolver interface {
+	User(ctx context.Context, obj *model.Product) (*model.User, error)
+	Product(ctx context.Context, obj *model.Product) (*model.Product, error)
+}
 type MutationResolver interface {
 	RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error)
 	LoginUser(ctx context.Context, input model.LoginUser) (*model.AuthResponse, error)
-	CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Bucket, error)
+	CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Product, error)
 	CreateProduct(ctx context.Context, input model.NewProduct) (*model.Product, error)
 	UpdateProduct(ctx context.Context, id string, input model.UpdateProduct) (*model.Product, error)
 	DeleteProduct(ctx context.Context, id string) (bool, error)
@@ -113,7 +118,7 @@ type QueryResolver interface {
 	Products(ctx context.Context, filter *model.FilterProduct, limit *int, offset *int) ([]*model.Product, error)
 	User(ctx context.Context, id string) (*model.User, error)
 	Users(ctx context.Context, filter *model.FilterUser, limit *int, offset *int) ([]*model.User, error)
-	Buckets(ctx context.Context) ([]*model.Bucket, error)
+	Buckets(ctx context.Context) (*model.Product, error)
 }
 type UserResolver interface {
 	ProductID(ctx context.Context, obj *model.User) ([]*model.Product, error)
@@ -543,7 +548,7 @@ type Query{
   products(filter: FilterProduct, limit: Int = 10 , offset: Int = 0):[Product!]!
   user(id:ID!):User!
   users(filter: FilterUser, limit: Int = 10 , offset: Int = 0):[User!]!
-  buckets: [Bucket!]!
+  buckets: Bucket!
 }
 
 
@@ -925,7 +930,7 @@ func (ec *executionContext) _AuthToken_expiredAt(ctx context.Context, field grap
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Bucket_id(ctx context.Context, field graphql.CollectedField, obj *model.Bucket) (ret graphql.Marshaler) {
+func (ec *executionContext) _Bucket_id(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -959,7 +964,7 @@ func (ec *executionContext) _Bucket_id(ctx context.Context, field graphql.Collec
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Bucket_user(ctx context.Context, field graphql.CollectedField, obj *model.Bucket) (ret graphql.Marshaler) {
+func (ec *executionContext) _Bucket_user(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -970,13 +975,13 @@ func (ec *executionContext) _Bucket_user(ctx context.Context, field graphql.Coll
 		Object:   "Bucket",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
+		return ec.resolvers.Bucket().User(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -993,7 +998,7 @@ func (ec *executionContext) _Bucket_user(ctx context.Context, field graphql.Coll
 	return ec.marshalNUser2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Bucket_product(ctx context.Context, field graphql.CollectedField, obj *model.Bucket) (ret graphql.Marshaler) {
+func (ec *executionContext) _Bucket_product(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1004,13 +1009,13 @@ func (ec *executionContext) _Bucket_product(ctx context.Context, field graphql.C
 		Object:   "Bucket",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Product, nil
+		return ec.resolvers.Bucket().Product(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1145,9 +1150,9 @@ func (ec *executionContext) _Mutation_createBucket(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Bucket)
+	res := resTmp.(*model.Product)
 	fc.Result = res
-	return ec.marshalNBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐBucket(ctx, field.Selections, res)
+	return ec.marshalNBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐProduct(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createProduct(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1595,9 +1600,9 @@ func (ec *executionContext) _Query_buckets(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Bucket)
+	res := resTmp.(*model.Product)
 	fc.Result = res
-	return ec.marshalNBucket2ᚕᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐBucketᚄ(ctx, field.Selections, res)
+	return ec.marshalNBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐProduct(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3256,7 +3261,7 @@ func (ec *executionContext) _AuthToken(ctx context.Context, sel ast.SelectionSet
 
 var bucketImplementors = []string{"Bucket"}
 
-func (ec *executionContext) _Bucket(ctx context.Context, sel ast.SelectionSet, obj *model.Bucket) graphql.Marshaler {
+func (ec *executionContext) _Bucket(ctx context.Context, sel ast.SelectionSet, obj *model.Product) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, bucketImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -3268,18 +3273,36 @@ func (ec *executionContext) _Bucket(ctx context.Context, sel ast.SelectionSet, o
 		case "id":
 			out.Values[i] = ec._Bucket_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "user":
-			out.Values[i] = ec._Bucket_user(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Bucket_user(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "product":
-			out.Values[i] = ec._Bucket_product(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Bucket_product(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3856,48 +3879,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNBucket2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐBucket(ctx context.Context, sel ast.SelectionSet, v model.Bucket) graphql.Marshaler {
+func (ec *executionContext) marshalNBucket2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v model.Product) graphql.Marshaler {
 	return ec._Bucket(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNBucket2ᚕᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐBucketᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Bucket) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐBucket(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐBucket(ctx context.Context, sel ast.SelectionSet, v *model.Bucket) graphql.Marshaler {
+func (ec *executionContext) marshalNBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v *model.Product) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

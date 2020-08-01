@@ -54,12 +54,12 @@ models:
     fields:
       user:
         resolver: true
-  # Bucket:
-  #   model: github.com/sony-nurdianto/go-pedia/graph/model.Product
-  #   fields:
-  #     user:
-  #     product:
-  #       resolver : true
+  Bucket:
+    model: github.com/sony-nurdianto/go-pedia/graph/model.Product
+    fields:
+      user:
+      product:
+        resolver : true
   
 
   ID:

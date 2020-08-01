@@ -7,9 +7,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-pg/pg/v9"
-	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/sony-nurdianto/go-pedia/graph"
 	"github.com/sony-nurdianto/go-pedia/graph/domain"
@@ -39,7 +39,7 @@ func main() {
 
 	userRepo := postgres.UserRepo{DB: DB}
 
-	r := mux.NewRouter()
+	r := chi.NewRouter()
 
 	r.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8080"},
