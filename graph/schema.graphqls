@@ -98,4 +98,5 @@ type Mutation{
   createProduct(input: NewProduct!) : Product!
   updateProduct(id:ID!,input: UpdateProduct!) : Product!
   deleteProduct(id:ID!) : Boolean!
+  deleteBucket(id:ID) : Boolean!
 }

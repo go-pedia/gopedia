@@ -66,6 +66,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateBucket  func(childComplexity int, input *model.NewBucket) int
 		CreateProduct func(childComplexity int, input model.NewProduct) int
+		DeleteBucket  func(childComplexity int, id *string) int
 		DeleteProduct func(childComplexity int, id string) int
 		LoginUser     func(childComplexity int, input model.LoginUser) int
 		RegisterUser  func(childComplexity int, input model.RegisterUser) int
@@ -110,6 +111,7 @@ type MutationResolver interface {
 	CreateProduct(ctx context.Context, input model.NewProduct) (*model.Product, error)
 	UpdateProduct(ctx context.Context, id string, input model.UpdateProduct) (*model.Product, error)
 	DeleteProduct(ctx context.Context, id string) (bool, error)
+	DeleteBucket(ctx context.Context, id *string) (bool, error)
 }
 type ProductResolver interface {
 	User(ctx context.Context, obj *model.Product) (*model.User, error)
@@ -213,6 +215,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateProduct(childComplexity, args["input"].(model.NewProduct)), true
+
+	case "Mutation.deleteBucket":
+		if e.complexity.Mutation.DeleteBucket == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteBucket_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteBucket(childComplexity, args["id"].(*string)), true
 
 	case "Mutation.deleteProduct":
 		if e.complexity.Mutation.DeleteProduct == nil {
@@ -560,6 +574,7 @@ type Mutation{
   createProduct(input: NewProduct!) : Product!
   updateProduct(id:ID!,input: UpdateProduct!) : Product!
   deleteProduct(id:ID!) : Boolean!
+  deleteBucket(id:ID) : Boolean!
 }`, BuiltIn: false},
 	&ast.Source{Name: "federation/directives.graphql", Input: `
 scalar _Any
@@ -603,6 +618,20 @@ func (ec *executionContext) field_Mutation_createProduct_args(ctx context.Contex
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteBucket_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["id"]; ok {
+		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -1262,6 +1291,47 @@ func (ec *executionContext) _Mutation_deleteProduct(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().DeleteProduct(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteBucket(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteBucket_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteBucket(rctx, args["id"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3359,6 +3429,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "deleteBucket":
+			out.Values[i] = ec._Mutation_deleteBucket(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4407,6 +4482,29 @@ func (ec *executionContext) unmarshalOFilterUser2ᚖgithubᚗcomᚋsonyᚑnurdia
 	}
 	res, err := ec.unmarshalOFilterUser2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐFilterUser(ctx, v)
 	return &res, err
+}
+
+func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
+	return graphql.UnmarshalID(v)
+}
+
+func (ec *executionContext) marshalOID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	return graphql.MarshalID(v)
+}
+
+func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOID2string(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOID2string(ctx, sel, *v)
 }
 
 func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
