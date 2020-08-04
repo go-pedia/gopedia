@@ -3,7 +3,7 @@ package model
 //Bucket Struct
 type Bucket struct {
 	ID      string `json:"id"`
-	User    string `json:"users"`
+	User    string `json:"user"`
 	Product string `json:"product"`
 }
 

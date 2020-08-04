@@ -94,9 +94,9 @@ type Query{
 type Mutation{
   registerUser(input:RegisterUser!): AuthResponse!
   loginUser(input:LoginUser!):AuthResponse!
-  createBucket(input:NewBucket) : Bucket!
+  createBucket(input:NewBucket!) : Bucket!
   createProduct(input: NewProduct!) : Product!
   updateProduct(id:ID!,input: UpdateProduct!) : Product!
   deleteProduct(id:ID!) : Boolean!
-  deleteBucket(id:ID) : Boolean!
+  deleteBucket(id:ID!) : Boolean!
 }

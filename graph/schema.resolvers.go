@@ -14,14 +14,13 @@ import (
 )
 
 func (r *bucketResolver) Users(ctx context.Context, obj *model.Bucket) (*model.User, error) {
-	return r.Domain.BucketRepo.GetUserBucket(obj)
+	return getUserLoader(ctx).Load(obj.User)
 }
 
 func (r *bucketResolver) Product(ctx context.Context, obj *model.Bucket) (*model.Product, error) {
-	return r.Domain.BucketRepo.GetProductBucket(obj)
+	return getProductLoader(ctx).Load(obj.Product)
 }
 
-//RegisterUser This function is to Register User
 func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -30,8 +29,6 @@ func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (
 
 	return r.Domain.RegisterUser(ctx, input)
 }
-
-//LoginUser This function is To handle user Login
 func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -41,7 +38,7 @@ func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model
 	return r.Domain.LoginUser(ctx, input)
 }
 
-func (r *mutationResolver) CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Bucket, error) {
+func (r *mutationResolver) CreateBucket(ctx context.Context, input model.NewBucket) (*model.Bucket, error) {
 	return r.Domain.CreateBucket(ctx, input)
 }
 
@@ -57,7 +54,7 @@ func (r *mutationResolver) DeleteProduct(ctx context.Context, id string) (bool, 
 	return r.Domain.DeleteProduct(ctx, id)
 }
 
-func (r *mutationResolver) DeleteBucket(ctx context.Context, id *string) (bool, error) {
+func (r *mutationResolver) DeleteBucket(ctx context.Context, id string) (bool, error) {
 	return r.Domain.DeleteBucket(ctx, id)
 }
 
@@ -116,6 +113,3 @@ type userResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *bucketResolver) User(ctx context.Context, obj *model.Bucket) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
-}

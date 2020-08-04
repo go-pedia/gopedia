@@ -64,9 +64,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateBucket  func(childComplexity int, input *model.NewBucket) int
+		CreateBucket  func(childComplexity int, input model.NewBucket) int
 		CreateProduct func(childComplexity int, input model.NewProduct) int
-		DeleteBucket  func(childComplexity int, id *string) int
+		DeleteBucket  func(childComplexity int, id string) int
 		DeleteProduct func(childComplexity int, id string) int
 		LoginUser     func(childComplexity int, input model.LoginUser) int
 		RegisterUser  func(childComplexity int, input model.RegisterUser) int
@@ -107,11 +107,11 @@ type BucketResolver interface {
 type MutationResolver interface {
 	RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error)
 	LoginUser(ctx context.Context, input model.LoginUser) (*model.AuthResponse, error)
-	CreateBucket(ctx context.Context, input *model.NewBucket) (*model.Bucket, error)
+	CreateBucket(ctx context.Context, input model.NewBucket) (*model.Bucket, error)
 	CreateProduct(ctx context.Context, input model.NewProduct) (*model.Product, error)
 	UpdateProduct(ctx context.Context, id string, input model.UpdateProduct) (*model.Product, error)
 	DeleteProduct(ctx context.Context, id string) (bool, error)
-	DeleteBucket(ctx context.Context, id *string) (bool, error)
+	DeleteBucket(ctx context.Context, id string) (bool, error)
 }
 type ProductResolver interface {
 	User(ctx context.Context, obj *model.Product) (*model.User, error)
@@ -202,7 +202,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateBucket(childComplexity, args["input"].(*model.NewBucket)), true
+		return e.complexity.Mutation.CreateBucket(childComplexity, args["input"].(model.NewBucket)), true
 
 	case "Mutation.createProduct":
 		if e.complexity.Mutation.CreateProduct == nil {
@@ -226,7 +226,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteBucket(childComplexity, args["id"].(*string)), true
+		return e.complexity.Mutation.DeleteBucket(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteProduct":
 		if e.complexity.Mutation.DeleteProduct == nil {
@@ -570,11 +570,11 @@ type Query{
 type Mutation{
   registerUser(input:RegisterUser!): AuthResponse!
   loginUser(input:LoginUser!):AuthResponse!
-  createBucket(input:NewBucket) : Bucket!
+  createBucket(input:NewBucket!) : Bucket!
   createProduct(input: NewProduct!) : Product!
   updateProduct(id:ID!,input: UpdateProduct!) : Product!
   deleteProduct(id:ID!) : Boolean!
-  deleteBucket(id:ID) : Boolean!
+  deleteBucket(id:ID!) : Boolean!
 }`, BuiltIn: false},
 	&ast.Source{Name: "federation/directives.graphql", Input: `
 scalar _Any
@@ -596,9 +596,9 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createBucket_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewBucket
+	var arg0 model.NewBucket
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalONewBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐNewBucket(ctx, tmp)
+		arg0, err = ec.unmarshalNNewBucket2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐNewBucket(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -624,9 +624,9 @@ func (ec *executionContext) field_Mutation_createProduct_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_deleteBucket_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
-		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1167,7 +1167,7 @@ func (ec *executionContext) _Mutation_createBucket(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateBucket(rctx, args["input"].(*model.NewBucket))
+		return ec.resolvers.Mutation().CreateBucket(rctx, args["input"].(model.NewBucket))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1331,7 +1331,7 @@ func (ec *executionContext) _Mutation_deleteBucket(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteBucket(rctx, args["id"].(*string))
+		return ec.resolvers.Mutation().DeleteBucket(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4037,6 +4037,10 @@ func (ec *executionContext) unmarshalNLoginUser2githubᚗcomᚋsonyᚑnurdianto�
 	return ec.unmarshalInputLoginUser(ctx, v)
 }
 
+func (ec *executionContext) unmarshalNNewBucket2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐNewBucket(ctx context.Context, v interface{}) (model.NewBucket, error) {
+	return ec.unmarshalInputNewBucket(ctx, v)
+}
+
 func (ec *executionContext) unmarshalNNewProduct2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐNewProduct(ctx context.Context, v interface{}) (model.NewProduct, error) {
 	return ec.unmarshalInputNewProduct(ctx, v)
 }
@@ -4484,29 +4488,6 @@ func (ec *executionContext) unmarshalOFilterUser2ᚖgithubᚗcomᚋsonyᚑnurdia
 	return &res, err
 }
 
-func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
-	return graphql.UnmarshalID(v)
-}
-
-func (ec *executionContext) marshalOID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	return graphql.MarshalID(v)
-}
-
-func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOID2string(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec.marshalOID2string(ctx, sel, *v)
-}
-
 func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
 	return graphql.UnmarshalInt(v)
 }
@@ -4528,18 +4509,6 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 		return graphql.Null
 	}
 	return ec.marshalOInt2int(ctx, sel, *v)
-}
-
-func (ec *executionContext) unmarshalONewBucket2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐNewBucket(ctx context.Context, v interface{}) (model.NewBucket, error) {
-	return ec.unmarshalInputNewBucket(ctx, v)
-}
-
-func (ec *executionContext) unmarshalONewBucket2ᚖgithubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐNewBucket(ctx context.Context, v interface{}) (*model.NewBucket, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalONewBucket2githubᚗcomᚋsonyᚑnurdiantoᚋgoᚑpediaᚋgraphᚋmodelᚐNewBucket(ctx, v)
-	return &res, err
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
