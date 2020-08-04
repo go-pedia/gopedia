@@ -1,8 +1,6 @@
 package postgres
 
 import (
-	"fmt"
-
 	"github.com/go-pg/pg/v9"
 	"github.com/sony-nurdianto/go-pedia/graph/model"
 )
@@ -11,6 +9,24 @@ import (
 type BucketRepo struct {
 	DB *pg.DB
 }
+
+//CurrentUserKey To initialCurrentUser
+// const CurrentUserKey = "currentUser"
+
+//GetUserFromCTX This function is to get User from context
+// func GetUserFromCTX(ctx context.Context) (*model.User, error) {
+
+// 	if ctx.Value(CurrentUserKey) == nil {
+// 		return nil, errors.New("no user in context")
+// 	}
+
+// 	user, ok := ctx.Value(CurrentUserKey).(*model.User)
+// 	if !ok || user.ID == "" {
+// 		return nil, errors.New("no user in context")
+// 	}
+
+// 	return user, nil
+// }
 
 //GetBucket to get all bucket
 func (ub *BucketRepo) GetBucket() ([]*model.Bucket, error) {
@@ -63,20 +79,15 @@ func (ub *BucketRepo) DeleteBucket(bucket *model.Bucket) error {
 	return err
 }
 
-//GetBucketProduct  this function is to handleing nested Object
-func (ub *BucketRepo) GetBucketProduct(product *model.Bucket) ([]*model.Product, error) {
-	var products []*model.Product
-	err := ub.DB.Model(&products).Where("product = ?", product.ID).Select()
-	fmt.Println(err, products)
-	return products, err
+//GetBucketUserByID is to handle get bucket user
+// func (ub *BucketRepo) GetBucketUserByID(ctx context.Context) (*model.Bucket, error) {
+// 	currentUser, err := GetUserFromCTX(ctx)
+// 	if err != nil {
+// 		return nil, errors.New("unautenticated")
+// 	}
+// 	var bucket model.Bucket
+// 	errs := ub.DB.Model(&bucket).Where("id = ?", currentUser.ID).Select()
 
-}
+// 	return &bucket, errs
 
-//GetBucketUser this function is to handleing nested Object
-func (ub *BucketRepo) GetBucketUser(user *model.Bucket) ([]*model.User, error) {
-	var users []*model.User
-	err := ub.DB.Model(&users).Where("user = ?", user.ID).Select()
-	fmt.Println(users, err)
-	return users, err
-
-}
+// }

@@ -21,6 +21,7 @@ func (r *bucketResolver) Product(ctx context.Context, obj *model.Bucket) (*model
 	return getBucketLoader(ctx).products.Load(obj.Product)
 }
 
+//RegisterUser is to Handle user register
 func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {
@@ -29,6 +30,8 @@ func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (
 
 	return r.Domain.RegisterUser(ctx, input)
 }
+
+//LoginUser is to Handle userLogin
 func (r *Resolver) LoginUser(ctx context.Context, input model.LoginUser) (*model.AuthResponse, error) {
 	isValid := validation(ctx, input)
 	if !isValid {

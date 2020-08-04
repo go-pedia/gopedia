@@ -558,11 +558,14 @@ input LoginUser{
   password: String!
 }
 
+
+
 type Query{
   products(filter: FilterProduct, limit: Int = 10 , offset: Int = 0):[Product!]!
   user(id:ID!):User!
   users(filter: FilterUser, limit: Int = 10 , offset: Int = 0):[User!]!
   buckets: [Bucket!]!
+  
 }
 
 
