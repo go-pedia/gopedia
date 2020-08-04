@@ -14,11 +14,11 @@ import (
 )
 
 func (r *bucketResolver) Users(ctx context.Context, obj *model.Bucket) (*model.User, error) {
-	return getUserLoader(ctx).Load(obj.User)
+	return getBucketLoader(ctx).user.Load(obj.User)
 }
 
 func (r *bucketResolver) Product(ctx context.Context, obj *model.Bucket) (*model.Product, error) {
-	return getProductLoader(ctx).Load(obj.Product)
+	return getBucketLoader(ctx).products.Load(obj.Product)
 }
 
 func (r *Resolver) RegisterUser(ctx context.Context, input model.RegisterUser) (*model.AuthResponse, error) {
@@ -59,7 +59,7 @@ func (r *mutationResolver) DeleteBucket(ctx context.Context, id string) (bool, e
 }
 
 func (r *productResolver) User(ctx context.Context, obj *model.Product) (*model.User, error) {
-	return getUserLoader(ctx).Load(obj.User)
+	return getBucketLoader(ctx).user.Load(obj.User)
 }
 
 func (r *queryResolver) Products(ctx context.Context, filter *model.FilterProduct, limit *int, offset *int) ([]*model.Product, error) {
